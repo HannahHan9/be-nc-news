@@ -8,7 +8,7 @@ beforeEach(() => seed(testData));
 afterAll(() => db.end());
 
 describe("GET /api/topics", () => {
-  test("200:should respond with an okay message", () => {
+  test("200:should respond with the correct length of the array", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -29,13 +29,13 @@ describe("GET /api/topics", () => {
       });
   });
 });
-describe("404 Path not found", () => {
-  test("404: Path does not exist", () => {
+describe("All non-existent path", () => {
+  test("404: should return a custom error message when the path is not found", () => {
     return request(app)
-      .get("/api/Poonam")
+      .get("/api/notapath")
       .expect(404)
-      .then((body) => {
-        expect(body.status).toBe(404);
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
       });
   });
 });
