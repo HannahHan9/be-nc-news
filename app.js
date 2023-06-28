@@ -3,6 +3,7 @@ const {
   getApiTopics,
   getApis,
   getArticleById,
+  getAllArticles,
 } = require("./controllers/app.controllers");
 const {
   handlePsqlErrors,
@@ -16,6 +17,8 @@ app.get("/api/topics", getApiTopics);
 app.get("/api", getApis);
 
 app.get("/api/articles/:article_id", getArticleById);
+
+app.get("/api/articles", getAllArticles);
 
 app.all("*", (_, res) => {
   res.status(404).send({ status: 404, msg: "Route Not Found" });
