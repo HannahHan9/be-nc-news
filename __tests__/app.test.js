@@ -76,6 +76,28 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 });
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200:should respond with the correct length of the comments array", () => {
+    return request(app)
+      .get("/api/articles/:article_id/comments")
+      .expect(200)
+      .then(({body}) => {
+        const {comments} = body;
+        expect(Array.isArray(comments)).toBe(true);
+        expect(body.topics.length).toBe(3);
+      });
+  });
+  test("200:should respond with all topics", () => {
+    return request(app)
+      .get("/api/topics")
+      .expect(200)
+      .then(({ body }) => {
+        
+        
+    
+        });
+      });
+  });
 describe("All non-existent path", () => {
   test("404: should return a custom error message when the path is not found", () => {
     return request(app)
