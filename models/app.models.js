@@ -26,3 +26,15 @@ exports.selectAllArticles = () => {
       } else return rows;
     });
 };
+
+exports.insertComment = (newComment) => {
+  const { username, body } = newComment;
+  return db
+    .query(
+      `INSERT INTO comments (username, body) VALUES ($1, $2) RETURNING *;`,
+      [username, body]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};

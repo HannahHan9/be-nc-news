@@ -2,6 +2,7 @@ const {
   selectAllTopics,
   selectArticleById,
   selectAllArticles,
+  insertComment,
 } = require("../models/app.models");
 const data = require("../endpoints.json");
 
@@ -30,4 +31,11 @@ exports.getAllArticles = (req, res, next) => {
       res.status(200).send({ articles });
     })
     .catch(next);
+};
+
+exports.addComment = (req, res, next) => {
+  const newComment = req.body;
+  insertComment(newComment).then((comment) => {
+    res.status(201).send({ comment });
+  });
 };
