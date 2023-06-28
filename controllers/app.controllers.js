@@ -1,4 +1,8 @@
-const { selectAllTopics, selectArticleById } = require("../models/app.models");
+const {
+  selectAllTopics,
+  selectArticleById,
+  selectCommentsByArticleId,
+} = require("../models/app.models");
 const data = require("../endpoints.json");
 
 exports.getApiTopics = (req, res, next) => {
@@ -21,6 +25,8 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getCommentsByArticleId = (req, res, next) => {
-  const {article_id} = req.params;
-  selectCommentsByArticleId(article_id)
-  }
+  const { article_id } = req.params;
+  selectCommentsByArticleId(article_id).then((comments) => {
+    res.status(200).send({ comments });
+  });
+};
