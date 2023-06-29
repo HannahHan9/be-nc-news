@@ -2,8 +2,12 @@ const {
   selectAllTopics,
   selectArticleById,
   selectAllArticles,
+  selectCommentsByArticleId,
 } = require("../models/app.models");
+
+
 const data = require("../endpoints.json");
+const { checkExists } = require("../db/seeds/utils");
 
 exports.getApiTopics = (req, res, next) => {
   selectAllTopics().then(({ rows }) => {
@@ -28,6 +32,20 @@ exports.getAllArticles = (req, res, next) => {
   selectAllArticles()
     .then((articles) => {
       res.status(200).send({ articles });
+    })
+    .catch(next);
+};
+
+exports.getCommentsByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
+  const promises = [
+    selectCommentsByArticleId(article_id),
+    checkExists(article_id),
+  ];
+  Promise.all(promises)
+    .then((resolvedPromises) => {
+      const comments = resolvedPromises[0];
+      res.status(200).send({ comments });
     })
     .catch(next);
 };
