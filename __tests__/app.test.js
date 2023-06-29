@@ -225,7 +225,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Not Found");
       });
   });
-  test("400:should respond with Bad request when passed an username that is not a string", () => {
+  test("400:should respond with Bad request when missing a required property", () => {
     const testComment = {
       username: "butter_bridge",
     };
