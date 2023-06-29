@@ -1,4 +1,7 @@
 const db = require("../db/connection");
+const { checkExists } = require("../db/seeds/utils");
+const format = require("pg-format");
+const fs = require("fs/promises");
 
 exports.selectAllTopics = () => {
   return db.query(`SELECT * FROM topics`);
@@ -21,6 +24,6 @@ exports.selectCommentsByArticleId = (article_id) => {
       [article_id]
     )
     .then(({ rows }) => {
-       return rows;
+      return rows;
     });
 };
