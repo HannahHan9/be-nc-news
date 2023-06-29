@@ -179,6 +179,91 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: should add a comment to the database and respond with newly added comment", () => {
+    const testComment = {
+      username: "butter_bridge",
+      body: "I love owls",
+    };
+    return request(app)
+      .post("/api/articles/9/comments")
+      .send(testComment)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toHaveProperty("body", "I love owls");
+        expect(comment).toHaveProperty("votes", 0);
+        expect(comment).toHaveProperty("author", "butter_bridge");
+        expect(comment).toHaveProperty("article_id", 9);
+        expect(comment).toHaveProperty("created_at", expect.any(String));
+        expect(comment).toHaveProperty("comment_id", 19);
+      });
+  });
+  test("400:should respond with bad request for an invalid article id", () => {
+    const testComment = {
+      username: "butter_bridge",
+      body: "I love owls",
+    };
+    return request(app)
+      .post("/api/articles/NotAnId/comments")
+      .expect(400)
+      .send(testComment)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("404:should respond with Not Found when passed an id that is valid but does not exist", () => {
+    const testComment = {
+      username: "butter_bridge",
+      body: "I love owls",
+    };
+    return request(app)
+      .post("/api/articles/9999/comments")
+      .expect(404)
+      .send(testComment)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+  test("400:should respond with Bad request when passed an username that is not a string", () => {
+    const testComment = {
+      username: "butter_bridge",
+    };
+    return request(app)
+      .post("/api/articles/9/comments")
+      .expect(400)
+      .send(testComment)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("404:should respond with Bad request when passed an username that is not a string", () => {
+    const testComment = {
+      username: 6,
+      body: "I love owls",
+    };
+    return request(app)
+      .post("/api/articles/9/comments")
+      .expect(404)
+      .send(testComment)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+  test("404:should respond with Bad request when passed an invalid username", () => {
+    const testComment = {
+      username: "H.Han",
+      body: "I am not a registered user",
+    };
+    return request(app)
+      .post("/api/articles/9/comments")
+      .expect(404)
+      .send(testComment)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+});
 describe("All non-existent path", () => {
   test("404: should return a custom error message when the path is not found", () => {
     return request(app)
