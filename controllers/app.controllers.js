@@ -36,7 +36,12 @@ exports.getAllArticles = (req, res, next) => {
 exports.postComment = (req, res, next) => {
   const { article_id } = req.params;
   const newComment = req.body;
-  insertComment(newComment).then((comment) => {
-    res.status(201).send({ comment });
-  });
+  insertComment(newComment, article_id)
+    .then((comment) => {
+      res.status(201).send({ comment });
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
 };
