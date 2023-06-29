@@ -115,6 +115,23 @@ describe("GET /api/articles", () => {
       });
   });
 });
+// describe("POST /api/articles/:article_id/comments", () => {
+//   test("201: should add a comment to the database and respond with newly added comment", () => {
+//     const testComment = {
+//       author: "butter_bridge",
+//       body: "I love owls",
+//     };
+//     return request(app)
+//       .post("/api/articles/9/comments")
+//       .send(testComment)
+//       .expect(201)
+//       .then(({ body }) => {
+//         const { comment } = body;
+//         expect(comment).toHaveProperty("body", "I love owls")
+//         expect(comment).toHaveProperty("body", "I love owls")
+//       });
+//   });
+// });
 describe("All non-existent path", () => {
   test("404: should return a custom error message when the path is not found", () => {
     return request(app)

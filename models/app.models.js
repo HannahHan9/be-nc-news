@@ -1,5 +1,4 @@
 const db = require("../db/connection");
-const articles = require("../db/data/test-data/articles");
 
 exports.selectAllTopics = () => {
   return db.query(`SELECT * FROM topics`);
@@ -28,11 +27,11 @@ exports.selectAllArticles = () => {
 };
 
 exports.insertComment = (newComment) => {
-  const { username, body } = newComment;
+  const { author, body } = newComment;
   return db
     .query(
-      `INSERT INTO comments (username, body) VALUES ($1, $2) RETURNING *;`,
-      [username, body]
+      `INSERT INTO comments (author, body) VALUES ($1, $2) RETURNING *;`,
+      [author, body]
     )
     .then(({ rows }) => {
       return rows;
