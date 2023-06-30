@@ -6,6 +6,7 @@ const {
   insertComment,
   updateArticle,
   removeComment,
+  selectAllUsers,
 } = require("../models/app.models");
 
 const data = require("../endpoints.json");
@@ -82,6 +83,14 @@ exports.deleteCommentById = (req, res, next) => {
   Promise.all(promises)
     .then(() => {
       res.status(204).send();
+    })
+    .catch(next);
+};
+
+exports.getAllusers = (req, res, next) => {
+  selectAllUsers()
+    .then(({ rows }) => {
+      res.status(200).send({ users: rows });
     })
     .catch(next);
 };
