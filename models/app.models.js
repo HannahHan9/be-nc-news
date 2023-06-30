@@ -50,6 +50,22 @@ exports.insertComment = (comment, article_id) => {
     });
 };
 
+exports.updateArticle = (body, article_id) => {
+  const { inc_votes } = body;
+  return db
+    .query(
+      `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`,
+      [inc_votes, article_id]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+
+exports.removeComment = (comment_id) => {
+  return db.query(`DELETE FROM comments WHERE comment_id = $1;`, [comment_id]);
+};
+
 exports.selectAllUsers = () => {
   return db.query(`SELECT * FROM users;`);
 };
