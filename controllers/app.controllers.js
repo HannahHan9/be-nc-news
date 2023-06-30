@@ -65,7 +65,9 @@ exports.postComment = (req, res, next) => {
 };
 
 exports.getAllusers = (req, res, next) => {
-  selectAllUsers().then(({ rows }) => {
-    res.status(200).send({ users: rows });
-  });
+  selectAllUsers()
+    .then(({ rows }) => {
+      res.status(200).send({ users: rows });
+    })
+    .catch(next);
 };
