@@ -4,8 +4,8 @@ const {
   selectAllArticles,
   selectCommentsByArticleId,
   insertComment,
+  selectAllUsers,
 } = require("../models/app.models");
-
 
 const data = require("../endpoints.json");
 const { checkExists } = require("../db/seeds/utils");
@@ -62,4 +62,10 @@ exports.postComment = (req, res, next) => {
       console.log(err);
       next(err);
     });
+};
+
+exports.getAllusers = (req, res, next) => {
+  selectAllUsers().then(({ rows }) => {
+    res.status(200).send({ users: rows });
+  });
 };

@@ -1,7 +1,6 @@
 const db = require("../db/connection");
 const { checkExists } = require("../db/seeds/utils");
 
-
 exports.selectAllTopics = () => {
   return db.query(`SELECT * FROM topics`);
 };
@@ -49,4 +48,8 @@ exports.insertComment = (comment, article_id) => {
     .then(({ rows }) => {
       return rows[0];
     });
+};
+
+exports.selectAllUsers = () => {
+  return db.query(`SELECT * FROM users;`);
 };

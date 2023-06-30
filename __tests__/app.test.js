@@ -264,6 +264,29 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+describe("GET /api/users", () => {
+  test("200:should respond with the correct length of the users array", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users.length).toBe(4);
+      });
+  });
+  test("200:should respond with all users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.users)).toBe(true);
+        body.users.forEach((user) => {
+          expect(user).toHaveProperty("username");
+          expect(user).toHaveProperty("name");
+          expect(user).toHaveProperty("avatar_url");
+        });
+      });
+  });
+});
 describe("All non-existent path", () => {
   test("404: should return a custom error message when the path is not found", () => {
     return request(app)
