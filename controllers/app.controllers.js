@@ -4,6 +4,7 @@ const {
   selectAllArticles,
   selectCommentsByArticleId,
   insertComment,
+  updateArticle,
   removeComment,
 } = require("../models/app.models");
 
@@ -61,6 +62,18 @@ exports.postComment = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.patchArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+  const body = req.body;
+  const promises = [updateArticle(body, article_id), checkExists(article_id)];
+  Promise.all(promises)
+    .then((resolvedPromises) => {
+      const article = resolvedPromises[0];
+      res.status(200).send({ article });
+    })
+    .catch(next);
 };
 
 exports.deleteCommentById = (req, res, next) => {

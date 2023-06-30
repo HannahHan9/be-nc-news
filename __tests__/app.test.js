@@ -264,6 +264,88 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+describe("PATCH /api/articles/:article_id", () => {
+  test("200: should increment the article votes by 1 for an article", () => {
+    const testBody = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(testBody)
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toHaveProperty("article_id", 1);
+        expect(article).toHaveProperty("votes", 101);
+      });
+  });
+  test("200: should decrement the article votes by 1 for an article", () => {
+    const testBody = { inc_votes: -1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(testBody)
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toHaveProperty("article_id", 1);
+        expect(article).toHaveProperty("votes", 99);
+      });
+  });
+  test("200: should ignore other properties passed in the request body", () => {
+    const testBody = { inc_votes: 1, author: "H.Han" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(testBody)
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toHaveProperty("article_id", 1);
+        expect(article).toHaveProperty("votes", 101);
+      });
+  });
+  test("400:should respond with bad request for an invalid article id", () => {
+    const testBody = { inc_votes: -1 };
+    return request(app)
+      .patch("/api/articles/NotAnId")
+      .send(testBody)
+      .expect(400)
+      .send(testBody)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("404:should respond with Not Found for a valid article id that does not exist", () => {
+    const testBody = { inc_votes: -1 };
+    return request(app)
+      .patch("/api/articles/9999")
+      .send(testBody)
+      .expect(404)
+      .send(testBody)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+  test("400:should respond with bad request when inc_votes is not an integer", () => {
+    const testBody = { inc_votes: "NotANumber" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(testBody)
+      .expect(400)
+      .send(testBody)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("400:should respond with bad request when passed request body doesn't have inc_votes property", () => {
+    const testBody = { author: "H.Han", title: "The Story of the Little Mole Who Knew It Was None of His Business"};
+    return request(app)
+      .patch("/api/articles/1")
+      .send(testBody)
+      .expect(400)
+      .send(testBody)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+});
 describe("DELETE /api/comments/:comment_id", () => {
   test("204: should delete the specified comment from the database and respond with a 204 No Content status", () => {
     return request(app).delete("/api/comments/1").expect(204);
