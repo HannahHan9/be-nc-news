@@ -4,8 +4,8 @@ const {
   selectAllArticles,
   selectCommentsByArticleId,
   insertComment,
+  updateArticle,
 } = require("../models/app.models");
-
 
 const data = require("../endpoints.json");
 const { checkExists } = require("../db/seeds/utils");
@@ -62,4 +62,16 @@ exports.postComment = (req, res, next) => {
       console.log(err);
       next(err);
     });
+};
+
+exports.patchArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+  const body = req.body;
+  const promises = [updateArticle(body, article_id), checkExists(article_id)];
+  Promise.all(promises)
+    .then((resolvedPromises) => {
+      const article = resolvedPromises[0];
+      res.status(200).send({ article });
+    })
+    .catch(next);
 };
