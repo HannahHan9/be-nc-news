@@ -6,6 +6,7 @@ const {
   getAllArticles,
   getCommentsByArticleId,
   postComment,
+  deleteCommentById,
 } = require("./controllers/app.controllers");
 const {
   handlePsqlErrors,
@@ -27,6 +28,8 @@ app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 app.post("/api/articles/:article_id/comments", postComment);
+
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.all("*", (_, res) => {
   res.status(404).send({ status: 404, msg: "Route Not Found" });

@@ -4,8 +4,8 @@ const {
   selectAllArticles,
   selectCommentsByArticleId,
   insertComment,
+  removeComment,
 } = require("../models/app.models");
-
 
 const data = require("../endpoints.json");
 const { checkExists } = require("../db/seeds/utils");
@@ -59,7 +59,16 @@ exports.postComment = (req, res, next) => {
       res.status(201).send({ comment });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
+};
+
+exports.deleteCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  const promises = [removeComment(comment_id), checkExists(comment_id)];
+  Promise.all(promises)
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch(next);
 };

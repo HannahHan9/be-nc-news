@@ -264,6 +264,27 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: should delete the specified comment from the database and respond with a 204 No Content status", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  test("400:should respond with bad request for an invalid comment id", () => {
+    return request(app)
+      .delete("/api/comments/NotAnId")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("404:should respond with Not Found when passed an id that does not exist", () => {
+    return request(app)
+      .delete("/api/comments/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+});
 describe("All non-existent path", () => {
   test("404: should return a custom error message when the path is not found", () => {
     return request(app)

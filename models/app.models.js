@@ -1,7 +1,6 @@
 const db = require("../db/connection");
 const { checkExists } = require("../db/seeds/utils");
 
-
 exports.selectAllTopics = () => {
   return db.query(`SELECT * FROM topics`);
 };
@@ -49,4 +48,8 @@ exports.insertComment = (comment, article_id) => {
     .then(({ rows }) => {
       return rows[0];
     });
+};
+
+exports.removeComment = (comment_id) => {
+  return db.query(`DELETE FROM comments WHERE comment_id = $1;`, [comment_id]);
 };
