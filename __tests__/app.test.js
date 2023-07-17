@@ -4,6 +4,7 @@ const testData = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
 const db = require("../db/connection");
 const data = require("../endpoints.json");
+const { expect } = require("@jest/globals");
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -112,6 +113,82 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+});
+describe("GET /api/articles?", () => {
+  test("200:should respond with the articles on the passed topic", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(Array.isArray(articles)).toBe(true);
+        expect(articles.length).toBe(12);
+        articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+  test("200:should respond with an empty array if the passed topic does not have any articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(Array.isArray(articles)).toBe(true);
+        expect(articles).toHaveLength(0);
+      });
+  });
+  test("404: should respond with Not Found when the passed topic does not exist", () => {
+    return request(app)
+      .get("/api/articles?topic=john")
+      .expect(404)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+  test("200:should respond with all the articles in descending order by default", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(body.articles).toBeSortedBy("title", { descending: true });
+      });
+  });
+  test("400:should respond with invalid sort query when passed an invalid sort by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=invalidOption")
+      .expect(400)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(body.msg).toBe("Invalid sort query");
+      });
+  });
+  test("200:should respond with all the articles in ascending order when passed asc/ASC query", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { ascending: true });
+      });
+  });
+  test("200:should respond with all the articles in descending order when passed desc/DESC query", () => {
+    return request(app)
+      .get("/api/articles?order=DESC")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("400:should respond with invalid order query when passed invalid order query", () => {
+    return request(app)
+      .get("/api/articles?order=invalidOrderQuery")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid order query");
       });
   });
 });
@@ -335,7 +412,11 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
   test("400:should respond with bad request when passed request body doesn't have inc_votes property", () => {
-    const testBody = { author: "H.Han", title: "The Story of the Little Mole Who Knew It Was None of His Business"};
+    const testBody = {
+      author: "H.Han",
+      title:
+        "The Story of the Little Mole Who Knew It Was None of His Business",
+    };
     return request(app)
       .patch("/api/articles/1")
       .send(testBody)

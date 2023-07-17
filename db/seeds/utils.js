@@ -1,4 +1,5 @@
 const db = require("../connection");
+const format = require("pg-format");
 
 exports.convertTimestampToDate = ({ created_at, ...otherProperties }) => {
   if (!created_at) return { ...otherProperties };
@@ -23,12 +24,11 @@ exports.formatComments = (comments, idLookup) => {
   });
 };
 
-exports.checkExists = (article_id) => {
-  return db
-    .query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
-    .then(({ rows }) => {
-      if (!rows.length) {
-        return Promise.reject({ status: 404, msg: "Not Found" });
-      }
-    });
+exports.checkExists = (table, column, value) => {
+  const queryStr = format(`SELECT * FROM %I WHERE %I = $1;`, table, column);
+  return db.query(queryStr, [value]).then(({ rows }) => {
+    if (!rows.length) {
+      return Promise.reject({ status: 404, msg: "Not Found" });
+    }
+  });
 };
