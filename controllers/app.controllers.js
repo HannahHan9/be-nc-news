@@ -11,6 +11,7 @@ const {
 
 const data = require("../endpoints.json");
 const { checkExists } = require("../db/seeds/utils");
+const fs = require("fs/promises");
 
 exports.getApiTopics = (req, res, next) => {
   selectAllTopics().then(({ rows }) => {
@@ -32,8 +33,14 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  selectAllArticles()
-    .then((articles) => {
+  const { topic, sort_by, order } = req.query;
+  const promises = [selectAllArticles(topic, sort_by, order)];
+  if (topic) {
+    promises.push(checkExists("topics", "slug", topic));
+  }
+  Promise.all(promises)
+    .then((resolvedPromises) => {
+      const articles = resolvedPromises[0];
       res.status(200).send({ articles });
     })
     .catch(next);
@@ -43,7 +50,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
   const promises = [
     selectCommentsByArticleId(article_id),
-    checkExists(article_id),
+    checkExists("articles", "article_id", article_id),
   ];
   Promise.all(promises)
     .then((resolvedPromises) => {
@@ -68,7 +75,10 @@ exports.postComment = (req, res, next) => {
 exports.patchArticleById = (req, res, next) => {
   const { article_id } = req.params;
   const body = req.body;
-  const promises = [updateArticle(body, article_id), checkExists(article_id)];
+  const promises = [
+    updateArticle(article_id, body),
+    checkExists("articles", "article_id", article_id),
+  ];
   Promise.all(promises)
     .then((resolvedPromises) => {
       const article = resolvedPromises[0];
@@ -79,7 +89,10 @@ exports.patchArticleById = (req, res, next) => {
 
 exports.deleteCommentById = (req, res, next) => {
   const { comment_id } = req.params;
-  const promises = [removeComment(comment_id), checkExists(comment_id)];
+  const promises = [
+    removeComment(comment_id),
+    checkExists("comments", "comment_id", comment_id),
+  ];
   Promise.all(promises)
     .then(() => {
       res.status(204).send();
