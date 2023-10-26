@@ -30,6 +30,7 @@ exports.selectAllArticles = (topic, sort_by = "created_at", order = "DESC") => {
     "article_img_url",
     "votes",
     "article_id",
+    "comment_count"
   ];
   const validOrderOptions = ["ASC", "DESC", "asc", "desc"];
   if (!validSortByOptions.includes(sort_by)) {

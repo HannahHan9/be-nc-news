@@ -420,7 +420,6 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/1")
       .send(testBody)
       .expect(400)
-      .send(testBody)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad request");
       });
