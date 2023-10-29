@@ -1,19 +1,19 @@
 const express = require("express");
 const {
-  getApiTopics,
-  getApis,
-  getArticleById,
-  getAllArticles,
-  getCommentsByArticleId,
-  postComment,
-  patchArticleById,
-  deleteCommentById,
-  getAllusers,
+        getApiTopics,
+        getApis,
+        getArticleById,
+        getAllArticles,
+        getCommentsByArticleId,
+        postComment,
+        patchArticleById,
+        deleteCommentById,
+        getAllusers,
 } = require("./controllers/app.controllers");
 const {
-  handlePsqlErrors,
-  handleCustomErrors,
-  handleServerErrors,
+        handlePsqlErrors,
+        handleCustomErrors,
+        handleServerErrors,
 } = require("./errors");
 const cors = require("cors");
 
@@ -41,8 +41,10 @@ app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.get("/api/users", getAllusers);
 
+app.get("/api/users/:username");
+
 app.all("*", (_, res) => {
-  res.status(404).send({ status: 404, msg: "Route Not Found" });
+        res.status(404).send({ status: 404, msg: "Route Not Found" });
 });
 
 app.use(handlePsqlErrors);
